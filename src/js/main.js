@@ -5,20 +5,24 @@ let typ_1 = prompt("Typ", "einnahme");
 let betrag_1 = parseInt(prompt("Betrag (in Cent)"));
 let datum_1 = prompt("Datum", "jjjj-mm-tt");
 
-console.log('Title: ${titel_1}');
-console.log('Typ: ${typ_1}');
-console.log('Betrag: ${betrag_1} ct');
-console.log('Datum: ${datum_1}');
+console.log(`Title: ${titel_1}
+    Typ: ${typ_1}
+    Betrag: ${betrag_1} ct
+    Datum: ${datum_1}`
+);
+
+    
+
 
 let title_2 = prompt("Titel", );
 let typ_2 = prompt("Typ", "einnahme");
 let betrag_2 = parseInt(prompt("Betrag", "z.B. 100,00"));
 let datum_2 = prompt("Datum", "jjjj-mm-tt");
 
-console.log('Title: ${titel_2}');
-console.log('Typ: ${typ_2}');
-console.log('Betrag: ${betrag_2} ct');  
-console.log('Datum: ${datum_2}');
+console.log(`Title: ${titel_2}
+    Typ: ${typ_2}
+    Betrag: ${betrag_2} ct
+    Datum: ${datum_2}`);
 
 
 //GesamtBilanz
