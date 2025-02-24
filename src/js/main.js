@@ -1,78 +1,116 @@
 "use strict";
 
+document.addEventListener("DOMContentLoaded", function () {
+    let einnahmen = 0;
+    let ausgaben = 0;
+    let bilanz = 0;
+    let eintraege = [];
 
-let einnahmen = 0,
-    ausgaben = 0,
-    bilanz = 0,
-    titel, 
-    typ, 
-    betrag, 
-    datum;
+    const formular = document.getElementById("eingabeformular");
+    const monatslistenContainer = document.getElementById("monatslisten");
 
-const eintrag_erfassen = function () {
-    titel = prompt("Titel:");
-    typ = prompt("Typ", "einnahme");
-    betrag= parseFloat(prompt("Betrag (in Cent)"));
-    datum= prompt("Datum", "jjjj-mm-tt");
-}
-eintrag_erfassen();
+    formular.addEventListener("submit", function (event) {
+        event.preventDefault(); // Verhindert das Neuladen der Seite
 
+        // Werte aus dem Formular holen
+        let titel = document.getElementById("titel").value;
+        let typ = document.querySelector("input[name='typ']:checked").value;
+        let betrag = parseFloat(document.getElementById("betrag").value.replace(",", "."));
+        let datum = document.getElementById("datum").value;
 
-const eintrag_ausgeben = function () {
-    return`Title: ${titel}
-Typ: ${typ}
-Betrag: ${betrag} ct
-Datum: ${datum}        
-`;
-};
-console.logeintrag_ausgeben(titel, typ, betrag, datum);
+        // Validierung: Alle Felder müssen ausgefüllt sein
+        if (!titel || isNaN(betrag) || betrag <= 0 || !datum) {
+            alert("Bitte alle Felder korrekt ausfüllen!");
+            return;
+        }
 
+        // Neues Objekt in die Liste hinzufügen
+        let eintrag = { titel, typ, betrag, datum };
+        eintraege.push(eintrag);
 
+        // Bilanz aktualisieren
+        if (typ === "einnahme") {
+            einnahmen += betrag;
+            bilanz += betrag;
+        } else {
+            ausgaben += betrag;
+            bilanz -= betrag;
+        }
 
+        // UI aktualisieren
+        updateUI();
+        formular.reset(); // Formular zurücksetzen
+    });
 
-const einfrag_verrechennen(titel, typ, betrag, datum);
-}
-einfrag_verrechennen = function () {
+    function updateUI() {
+        monatslistenContainer.innerHTML = ""; // Alte Liste löschen
 
-    if (typ === "einnahme") {
-        einnahmen = einnahmen + betrag;
-        bilanz = bilanz + betrag;
-    } else if [typ_1 === "ausgabe"] {
-        ausgaben = ausgaben + betrag;
-        bilanz = bilanz - betrag;
-    } else {
-        console.log("Falscher Typ");
+        let gruppierteDaten = gruppiereNachMonat(eintraege);
+
+        Object.keys(gruppierteDaten).forEach(monat => {
+            let gesamtMonatsBilanz = 0;
+            let monatsListe = document.createElement("article");
+            monatsListe.classList.add("monatsliste");
+
+            let h2 = document.createElement("h2");
+            h2.innerHTML = `<span class="monat-jahr">${monat}</span>`;
+
+            let ul = document.createElement("ul");
+
+            gruppierteDaten[monat].forEach(eintrag => {
+                gesamtMonatsBilanz += eintrag.typ === "einnahme" ? eintrag.betrag : -eintrag.betrag;
+                let li = document.createElement("li");
+                li.classList.add(eintrag.typ);
+
+                li.innerHTML = `
+                    <span class="datum">${eintrag.datum}</span>
+                    <span class="titel">${eintrag.titel}</span>
+                    <span class="betrag">${eintrag.betrag.toFixed(2)} €</span>
+                    <button class="entfernen-button">🗑</button>
+                `;
+
+                li.querySelector(".entfernen-button").addEventListener("click", function () {
+                    loescheEintrag(eintrag);
+                });
+
+                ul.appendChild(li);
+            });
+
+            let monatsbilanzSpan = document.createElement("span");
+            monatsbilanzSpan.classList.add("monatsbilanz", gesamtMonatsBilanz >= 0 ? "positiv" : "negativ");
+            monatsbilanzSpan.textContent = `${gesamtMonatsBilanz.toFixed(2)} €`;
+
+            h2.appendChild(monatsbilanzSpan);
+            monatsListe.appendChild(h2);
+            monatsListe.appendChild(ul);
+            monatslistenContainer.appendChild(monatsListe);
+        });
     }
-}
 
-einfrag_verrechennen(typ, betrag);
+    function gruppiereNachMonat(eintraege) {
+        return eintraege.reduce((gruppen, eintrag) => {
+            let [jahr, monat] = eintrag.datum.split("-");
+            let key = `${monat}/${jahr}`;
 
-const gesamt_bilanz_ausgeben = funktion(einnahmen, ausgaben, bilanz){
-    console.log(einnahmen: §{einnahmen})
-    titel = prompt("Titel:");
-    typ = prompt("Typ", "einnahme");
-    betrag = parseFloat(prompt("Betrag (in Cent)"));
-    datum = prompt("Datum", "jjjj-mm-tt")
-};
+            if (!gruppen[key]) {
+                gruppen[key] = [];
+            }
+            gruppen[key].push(eintrag);
+            return gruppen;
+        }, {});
+    }
 
-gesamt_bilanz_ausgeben(einnahmen, ausgaben, bilanz);
+    function loescheEintrag(eintrag) {
+        eintraege = eintraege.filter(e => e !== eintrag);
+        
+        if (eintrag.typ === "einnahme") {
+            einnahmen -= eintrag.betrag;
+            bilanz -= eintrag.betrag;
+        } else {
+            ausgaben -= eintrag.betrag;
+            bilanz += eintrag.betrag;
+        }
 
-console.log(`Title: ${titel_2}
-    Typ: ${typ_2}
-    Betrag: ${betrag_2} ct
-    Datum: ${datum_2}`
-);
-
-if (typ_2 === "einnahme") {
-    einnahmen += betrag_2;
-} else {
-    ausgaben += betrag_2;
-}
-
-let bilanz_0 = einnahmen - ausgaben;
-let positiv = bilanz >= 0;
-
-console.log(`Gesamteinnahmen: ${einnahmen} ct`);
-console.log(`Gesamtausgaben: ${ausgaben} ct`);
-console.log(`Bilanz: ${bilanz} ct`);
-console.log(`Bilanz ist positiv: ${positiv}`);
+        updateUI();
+    }
+});
