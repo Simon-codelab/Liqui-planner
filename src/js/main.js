@@ -15,24 +15,47 @@ const eintrag_erfassen = function () {
     betrag= parseFloat(prompt("Betrag (in Cent)"));
     datum= prompt("Datum", "jjjj-mm-tt");
 }
-
-console.log(`Title: ${titel}
-    Typ: ${typ}
-    Betrag: ${betrag} ct
-    Datum: ${datum}`
-);
-
 eintrag_erfassen();
-if (typ_1 === "einnahme") {
-    einnahmen += betrag_1;
-} else {
-    ausgaben += betrag_1;
+
+
+const eintrag_ausgeben = function () {
+    return`Title: ${titel}
+Typ: ${typ}
+Betrag: ${betrag} ct
+Datum: ${datum}        
+`;
+};
+console.logeintrag_ausgeben(titel, typ, betrag, datum);
+
+
+
+
+const einfrag_verrechennen(titel, typ, betrag, datum);
+}
+einfrag_verrechennen = function () {
+
+    if (typ === "einnahme") {
+        einnahmen = einnahmen + betrag;
+        bilanz = bilanz + betrag;
+    } else if [typ_1 === "ausgabe"] {
+        ausgaben = ausgaben + betrag;
+        bilanz = bilanz - betrag;
+    } else {
+        console.log("Falscher Typ");
+    }
 }
 
-let titel_2 = prompt("Titel:");
-let typ_2 = prompt("Typ", "einnahme");
-let betrag_2 = parseFloat(prompt("Betrag (in Cent)"));
-let datum_2 = prompt("Datum", "jjjj-mm-tt");
+einfrag_verrechennen(typ, betrag);
+
+const gesamt_bilanz_ausgeben = funktion(einnahmen, ausgaben, bilanz){
+    console.log(einnahmen: §{einnahmen})
+    titel = prompt("Titel:");
+    typ = prompt("Typ", "einnahme");
+    betrag = parseFloat(prompt("Betrag (in Cent)"));
+    datum = prompt("Datum", "jjjj-mm-tt")
+};
+
+gesamt_bilanz_ausgeben(einnahmen, ausgaben, bilanz);
 
 console.log(`Title: ${titel_2}
     Typ: ${typ_2}
